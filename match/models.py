@@ -32,16 +32,16 @@ class MatchStatus(models.Model):
 
 
 class ScoreDetail(models.Model):
-    score = models.IntegerField()
-    wickets = models.IntegerField()
+    score = models.IntegerField(default=0)
+    wickets = models.IntegerField(default=0)
     match = models.ForeignKey(Match)
     player = models.ForeignKey(PLAYER_MODEL)
-    zeroes = models.IntegerField()
-    ones = models.IntegerField()
-    twos = models.IntegerField()
-    threes = models.IntegerField()
-    fours = models.IntegerField()
-    six = models.IntegerField()
+    zeroes = models.IntegerField(default=0)
+    ones = models.IntegerField(default=0)
+    twos = models.IntegerField(default=0)
+    threes = models.IntegerField(default=0)
+    fours = models.IntegerField(default=0)
+    six = models.IntegerField(default=0)
 
 
 class Bet(models.Model):

@@ -35,6 +35,11 @@ class PlayerDetailAPI(APIView):
         return result
 
     def get(self, request):
+        """
+        GET url: http://localhost/players-detail/?id=<player_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             if query_params is False:
@@ -49,6 +54,12 @@ class PlayerDetailAPI(APIView):
         return Response(status=HTTP_404_NOT_FOUND)
 
     def post(self, request):
+        """
+        POST url: http://localhost/players-detail/
+        data schema: Player MODEL
+        :param request:
+        :return:
+        """
         try:
             raw_player_data = request.data
             processed_player_data = self._get_player_data(raw_player_data)
@@ -67,6 +78,11 @@ class PlayerDetailAPI(APIView):
         return Response(status=HTTP_417_EXPECTATION_FAILED)
 
     def delete(self, request):
+        """
+        DELETE url: http://localhost/players-detail/?id=<player_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             self.model.objects.filter(**query_params).delete()
@@ -85,6 +101,11 @@ class PlayerSkillAPI(APIView):
         return "%s %s EXCEPTION REACHED" % (self.__class__.__name__, request_type)
 
     def get(self, request):
+        """
+        GET url: http://localhost/players-skill/?id=<player_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             query_set = self.model.objects.filter(**query_params)
@@ -95,6 +116,12 @@ class PlayerSkillAPI(APIView):
         return Response(status=HTTP_404_NOT_FOUND)
 
     def post(self, request):
+        """
+        POST url: http://localhost/players-skill/
+        data schema: Skill MODEL
+        :param request:
+        :return:
+        """
         try:
             skill_data = request.data
             skill_serializer = self.serializer(data=skill_data)
@@ -106,6 +133,11 @@ class PlayerSkillAPI(APIView):
         return Response(status=HTTP_417_EXPECTATION_FAILED)
 
     def put(self, request):
+        """
+        PUT url: http://localhost/players-skill/?id=<player_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             modified_data = request.data
@@ -115,6 +147,11 @@ class PlayerSkillAPI(APIView):
         return Response(status=HTTP_404_NOT_FOUND)
 
     def delete(self, request):
+        """
+        DELETE url: http://localhost/players-detail/?id=<player_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             self.model.objects.filter(**query_params).delete()
@@ -133,6 +170,12 @@ class PlayerStatAPI(APIView):
         return "%s %s EXCEPTION REACHED" % (self.__class__.__name__, request_type)
 
     def put(self, request):
+        """
+        PUT url: http://localhost/players-stat/?id=<player_id>
+        data schema: Stat MODEL
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             modified_data = request.data
@@ -154,6 +197,11 @@ class PlayerMatchAPI(APIView):
         return "%s %s EXCEPTION REACHED" % (self.__class__.__name__, request_type)
 
     def get(self, request):
+        """
+        GET url: http://localhost/players-match/?id=<player_id>or match=<match_id> team = <team_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             query_set = self.model.objects.filter(**query_params)
@@ -164,6 +212,12 @@ class PlayerMatchAPI(APIView):
         return Response(status=HTTP_404_NOT_FOUND)
 
     def post(self, request):
+        """
+        POST url: http://localhost/players-match/
+        data schema: PlayerMatch MODEL
+        :param request:
+        :return:
+        """
         try:
             player_match_data = request.data
             player_match_serializer = self.serializer(data=player_match_data)
@@ -175,6 +229,12 @@ class PlayerMatchAPI(APIView):
         return Response(status=HTTP_417_EXPECTATION_FAILED)
 
     def put(self, request):
+        """
+        PUT url: http://localhost/players-match/?id=<player_id> or match=<match_id> or team=<team_id>
+        data schema: PlayerMatch MODEL
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             modified_data = request.data
@@ -184,6 +244,11 @@ class PlayerMatchAPI(APIView):
         return Response(status=HTTP_404_NOT_FOUND)
 
     def delete(self, request):
+        """
+        DELETE url: http://localhost/players-match/?id=<player_id> or match=<match_id> or team=<team_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             self.model.objects.filter(**query_params).delete()

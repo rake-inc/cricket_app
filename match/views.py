@@ -20,6 +20,11 @@ class MatchAPI(APIView):
         return "%s %s EXCEPTION REACHED" % (self.__class__.__name__, request_type)
 
     def get(self, request):
+        """
+        GET url : http://localhost/match/match-detail/?match=<match_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             if query_params is False:
@@ -34,6 +39,12 @@ class MatchAPI(APIView):
         return Response(status=HTTP_404_NOT_FOUND)
 
     def post(self, request):
+        """
+        POST url: http://localhost/match/match-detail/
+        data schema : refer Match MODEL
+        :param request:
+        :return:
+        """
         try:
             match_data = request.data
             match_serializer = self.serializer(data=match_data)
@@ -45,6 +56,12 @@ class MatchAPI(APIView):
         return Response(status=HTTP_417_EXPECTATION_FAILED)
 
     def put(self, request):
+        """
+        PUT url: http://localhost/match/match-detail/?match=<match_id>
+        json_data required
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             modified_data = request.data
@@ -54,6 +71,11 @@ class MatchAPI(APIView):
         return Response(status=HTTP_404_NOT_FOUND)
 
     def delete(self, request):
+        """
+        DELETE url: http://localhost/match/match-detail/?match=<match_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             self.model.objects.filter(**query_params).delete()
@@ -72,6 +94,11 @@ class ScoreAPI(APIView):
         return "%s %s EXCEPTION REACHED" % (self.__class__.__name__, request_type)
 
     def get(self, request):
+        """
+        GET url: http://localhost/match/match-score/?match=<match_id> or player=<player_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             query_set = self.model.objects.filter(**query_params)
@@ -82,6 +109,12 @@ class ScoreAPI(APIView):
         return Response(status=HTTP_404_NOT_FOUND)
 
     def post(self, request):
+        """
+        POST url: http://localhost/match/match-score/
+        data schema : refer ScoreDetail MODEL
+        :param request:
+        :return:
+        """
         try:
             score_data = request.data
             score_detail_serializer = self.serializer(data=score_data, many=True)
@@ -93,6 +126,11 @@ class ScoreAPI(APIView):
         return Response(status=HTTP_417_EXPECTATION_FAILED)
 
     def put(self, request):
+        """
+        PUT url: http://localhost/match/match-score/?match=<match_id>&player=<player_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             modified_data = request.data
@@ -102,6 +140,11 @@ class ScoreAPI(APIView):
         return Response(status=HTTP_404_NOT_FOUND)
 
     def delete(self, request):
+        """
+        DELETE url: http://localhost/match/match-score/?match=<match_id>&player=<player_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             self.model.objects.filter(**query_params).delete()
@@ -120,6 +163,11 @@ class MatchStatusAPI(APIView):
         return "%s %s EXCEPTION REACHED" % (self.__class__.__name__, request_type)
 
     def get(self, request):
+        """
+        GET url: http://localhost/match/match-status/?match=<match_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             query_set = self.model.objects.filter(**query_params)
@@ -130,6 +178,12 @@ class MatchStatusAPI(APIView):
         return Response(status=HTTP_404_NOT_FOUND)
 
     def post(self, request):
+        """
+        POST url: http://localhost/match/match-status/
+        data schema : refer MatchStatus Model
+        :param request:
+        :return:
+        """
         try:
             match_status_data = request.data
             match_status_serializer = self.serializer(data=match_status_data, many=True)
@@ -141,6 +195,12 @@ class MatchStatusAPI(APIView):
         return Response(status=HTTP_417_EXPECTATION_FAILED)
 
     def put(self, request):
+        """
+        PUT url: http://localhost/match/match-status/?match=<match_id>
+        data schema: MatchStatus MODEL
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             modified_data = request.data
@@ -150,6 +210,11 @@ class MatchStatusAPI(APIView):
         return Response(status=HTTP_404_NOT_FOUND)
 
     def delete(self, request):
+        """
+        DELETE url: http://localhost/match/match-status/?match=<match_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             self.model.objects.filter(**query_params).delete()
@@ -168,9 +233,19 @@ class BetAPI(APIView):
         return "%s %s EXCEPTION REACHED" % (self.__class__.__name__, request_type)
 
     def get(self, request):
+        """
+        GET url: http://localhost/match/match-bet-detail/match=<match_id>
+        :param request:
+        :return:
+        """
         try:
             username = request.user.username
-            query_set = self.model.objects.filter(username=username)
+            query_params = mapper.re_map_query_params(request.params)
+            if query_params is False:
+                query_set = self.model.objects.filter(username=username)
+            else:
+                query_set_object = self.model.objects.get(username=username)
+                query_set = query_set_object.filter(**query_params)
             bet_serializer = self.serializer(query_set, many=True)
             return Response(data=bet_serializer.data, status=HTTP_200_OK)
         except Exception as e:
@@ -178,6 +253,12 @@ class BetAPI(APIView):
         return Response(status=HTTP_404_NOT_FOUND)
 
     def post(self, request):
+        """
+        POST url: http://localhost/match/match-bet-detail/
+        data schema : refer Bet MODEL
+        :param request:
+        :return:
+        """
         try:
             bet_data = request.data
             bet_serializer = self.serializer(data=bet_data, many=True)
@@ -187,15 +268,6 @@ class BetAPI(APIView):
         except Exception as e:
             logging.error("%s %s" % (self._err_log("GET"), e))
         return Response(status=HTTP_417_EXPECTATION_FAILED)
-
-    def put(self, request):
-        try:
-            query_params = mapper.re_map_query_params(request.query_params)
-            modified_data = request.data
-            self.model.objects.filter(**query_params).update(modified_data)
-        except Exception as e:
-            logging.error("%s %s" % (self._err_log("PUT"), e))
-        return Response(status=HTTP_404_NOT_FOUND)
 
     def delete(self, request):
         try:
@@ -216,6 +288,11 @@ class CommentAPI(APIView):
         return "%s %s EXCEPTION REACHED" % (self.__class__.__name__, request_type)
 
     def get(self, request):
+        """
+        GET url: http://localhost/match/match-comment/?match=<match_id>or id=<comment_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             query_set = self.model.objects.filter(**query_params)
@@ -226,6 +303,12 @@ class CommentAPI(APIView):
         return Response(status=HTTP_404_NOT_FOUND)
 
     def post(self, request):
+        """
+        POST url: http://localhost/match/match-comment/
+        data schema : refer Comment MODEL
+        :param request:
+        :return:
+        """
         try:
             comments = request.data
             comment_serializer = self.serializer(data=comments, many=True)
@@ -237,6 +320,11 @@ class CommentAPI(APIView):
         return Response(status=HTTP_417_EXPECTATION_FAILED)
 
     def put(self, request):
+        """
+        PUT url: http://localhost/match/match-comment/?id=<comment_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             modified_data = request.data
@@ -246,6 +334,11 @@ class CommentAPI(APIView):
         return Response(status=HTTP_404_NOT_FOUND)
 
     def delete(self, request):
+        """
+        DELETE url: http://localhost/match/match-comment/?id=<comment_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             self.model.objects.filter(**query_params).delete()

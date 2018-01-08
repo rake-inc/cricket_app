@@ -21,6 +21,11 @@ class TeamAPI(APIView):
         return "%s %s EXCEPTION REACHED" % (self.__class__.__name__, request_type)
 
     def get(self, request):
+        """
+        GET url: http://localhost/team-detail/?id=<team_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             query_set = self.model.objects.filter(**query_params)
@@ -31,6 +36,12 @@ class TeamAPI(APIView):
         return Response(status=HTTP_404_NOT_FOUND)
 
     def post(self, request):
+        """
+        POST url: http://localhost/team-detail/
+        data schema: Team MODEL
+        :param request:
+        :return:
+        """
         try:
             team_data = request.data
             team_serializer = self.serializer(data=team_data)
@@ -42,6 +53,12 @@ class TeamAPI(APIView):
         return Response(status=HTTP_417_EXPECTATION_FAILED)
 
     def put(self, request):
+        """
+        PUT url: http://localhost/team-detail/?id=<team_id>
+        data schema: Team MODEL
+        :param request:
+        :return:
+        """
         try:
             modified_data = request.data
             query_params = mapper.re_map_query_params(request.query_params)
@@ -52,6 +69,11 @@ class TeamAPI(APIView):
         return Response(status=HTTP_417_EXPECTATION_FAILED)
 
     def delete(self, request):
+        """
+        DELETE url: http://localhost/team-detail/?id=<team_id>
+        :param request:
+        :return:
+        """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
             self.model.objects.filter(**query_params).delete()
