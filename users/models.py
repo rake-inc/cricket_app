@@ -6,5 +6,5 @@ from match.models import Match
 # Create your models here.
 
 class History(models.Model):
-    user = models.ManyToManyField(User)
-    match = models.ManyToManyField(Match)
+    user = models.ForeignKey(User)
+    match = models.ForeignKey(Match)

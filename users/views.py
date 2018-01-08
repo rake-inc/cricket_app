@@ -22,6 +22,12 @@ class UserAPI(APIView):
         return "%s %s EXCEPTION REACHED" % (self.__class__.__name__, request_type)
 
     def post(self, request):
+        """
+        POST url: http://localhost/create-user/
+        data schema: User MODEL
+        :param request:
+        :return:
+        """
         try:
             user_data = request.data
             user_serializer = self.serializer(data=user_data)
@@ -43,6 +49,11 @@ class UserDetailsAPI(APIView):
         return "%s %s EXCEPTION REACHED" % (self.__class__.__name__, request_type)
 
     def get(self, request):
+        """
+        GET url: http://localhost/users-details/
+        :param request:
+        :return:
+        """
         try:
             username = request.user.username
             query_set = self.model.objects.filter(username=username)
@@ -63,6 +74,11 @@ class UserHistory(APIView):
         return "%s %s EXCEPTION REACHED" % (self.__class__.__name__, request_type)
 
     def get(self, request):
+        """
+        GET url: http://localhost/users-history/
+        :param request:
+        :return:
+        """
         try:
             user_id = request.user.id
             query_set = self.model.objects.filter(user_id=user_id)
