@@ -34,6 +34,10 @@ class PlayerDetailAPI(APIView):
         result[fields.PLAYER_AGE] = raw_player_data[fields.PLAYER_AGE]
         return result
 
+    def _form_skill_data_dict(self, player_id, player_data):
+        player_data[fields.PLAYER_ID] = player_id
+        return player_data
+
     def get(self, request):
         """
         GET url: http://localhost/players-detail/?id=<player_id>
@@ -67,6 +71,11 @@ class PlayerDetailAPI(APIView):
             if player_serializer.is_valid():
                 player_serializer.save()
             player_data = self._get_player_id(raw_player_data, raw_player_data[fields.PLAYER_NAME])
+            player_id = self.model.objects.only(fields.PK).get(name=player_data[fields.PLAYER_NAME]).id
+            skill_data = self._form_skill_data_dict(player_id, player_data)
+            skill_serializer = SkillSerializer(data=skill_data)
+            if skill_serializer.is_valid():
+                skill_serializer.save()
             stats_data = CalculateStats(player_data)
             calculated_stat_data = stats_data.get_stats()
             stat_serializer = self.dependent_serializer(data=calculated_stat_data)
@@ -108,6 +117,10 @@ class PlayerSkillAPI(APIView):
         """
         try:
             query_params = mapper.re_map_query_params(request.query_params)
+            if query_params is False:
+                players_skill_object = self.model.objects.all()
+                players_skill_serializer = self.serializer(players_skill_object, many=True)
+                return Response(data=players_skill_serializer.data, status=HTTP_200_OK)
             query_set = self.model.objects.filter(**query_params)
             skill_serializer = self.serializer(query_set, many=True)
             return Response(data=skill_serializer.data, status=HTTP_200_OK)
@@ -148,7 +161,7 @@ class PlayerSkillAPI(APIView):
 
     def delete(self, request):
         """
-        DELETE url: http://localhost/players-detail/?id=<player_id>
+        DELETE url: http://localhost/players-skill/?id=<player_id>
         :param request:
         :return:
         """
@@ -168,6 +181,21 @@ class PlayerStatAPI(APIView):
 
     def _err_log(self, request_type):
         return "%s %s EXCEPTION REACHED" % (self.__class__.__name__, request_type)
+
+    def get(self, request):
+        try:
+            query_params = mapper.re_map_query_params(request.query_params)
+            if query_params is False:
+                players_stat_object = self.model.objects.all()
+                player_stat_serializer = self.serializer(players_stat_object, many=True)
+                print(player_stat_serializer.data)
+                return Response(data=player_stat_serializer.data, status=HTTP_200_OK)
+            query_set = self.model.objects.filter(**query_params)
+            player_stat_serializer = self.serializer(query_set, many=True)
+            return Response(player_stat_serializer.data, status=HTTP_200_OK)
+        except Exception as e:
+            logging.error("%s %s" % (self._err_log("GET"), e))
+        return Response(status=HTTP_404_NOT_FOUND)
 
     def put(self, request):
         """
